@@ -3,7 +3,6 @@ from requests.exceptions import RequestException
 from contextlib import closing
 from bs4 import BeautifulSoup
 import re
-from selenium import webdriver
 
 def simple_get(url):
     """
@@ -19,7 +18,7 @@ def simple_get(url):
                 return None
 
     except RequestException as e:
-        log_error('Error during requests to {0} : {1}'.format(url, str(e)))
+        log('error: Error during requests to {0} : {1}'.format(url, str(e)))
         return None
 
 
@@ -33,7 +32,7 @@ def is_good_response(resp):
             and content_type.find('html') > -1)
 
 
-def log_error(e):
+def log(e):
     """
     It is always a good idea to log errors. 
     This function just prints them, but you can
@@ -55,8 +54,9 @@ def top_user_decks(pages):
         if raw_html is not None:
             html = BeautifulSoup(raw_html, 'html.parser')
             top_decks = get_links(html, deck_link_re, top_decks)
+            log("Found {0} user decks over {1} pages".format(len(top_decks), pages))
         else:
-            log_error("top_user_decks simple_get returned None")
+            log("error: top_user_decks simple_get returned None")
     return top_decks
 
 def top_general_decks():
@@ -79,10 +79,11 @@ def top_general_decks():
         if raw_html is not None:
             html = BeautifulSoup(raw_html, 'html.parser')
             top_decks = get_links(html, deck_link_re, top_decks)
+            log("Found {0} general decks over {1} pages".format(len(top_decks), 2))
         else:
-            log_error("top_general_decks simple_get returned None")
+            log("error: top_general_decks simple_get returned None")
     else:
-        log_error("top_general_decks simple_get returned None")
+        log("error: top_general_decks simple_get returned None")
     
     
     return top_decks
@@ -121,9 +122,8 @@ def card_list(search_url):
                 if count == 2:
                     card_list.append(href)
     else:
-        log_error("top_general_decks simple_get returned None")
-    #print(card_list)
-    #print(len(card_list))
+        log("error: top_general_decks simple_get returned None")
+    log("Found {0} cards in deck.".format(len(card_list)))
     return card_list
 
 def main():
@@ -131,8 +131,7 @@ def main():
     #deck_list.extend(top_general_decks())
     main_url = "https://www.hearthpwn.com"
     search_url = "/decks/1140105-up-mill-warlock-top-100-by-illness"
-    #browser = webdriver.Chrome()
-    #browser.get(main_url+search_url)
+
 
 
 card_list("/decks/1140105-up-mill-warlock-top-100-by-illness")      
