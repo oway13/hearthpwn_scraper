@@ -54,9 +54,10 @@ def top_user_decks(pages):
         if raw_html is not None:
             html = BeautifulSoup(raw_html, 'html.parser')
             top_decks = get_links(html, deck_link_re, top_decks)
-            log("Found {0} user decks over {1} pages".format(len(top_decks), pages))
+            
         else:
             log("error: top_user_decks simple_get returned None")
+    log("Found {0} user decks over {1} pages".format(len(top_decks), pages))
     return top_decks
 
 def top_general_decks():
@@ -116,23 +117,31 @@ def card_list(search_url):
         html = BeautifulSoup(raw_html, 'html.parser')
         for link in html.aside.find_all('a'):
             href = str(link.get('href'))
-            if card_link_re.match(href):
+            if card_link_re.match(href):    
+                try:
+                    count = int(link['data-count'])
+                    if count == 2:
+                        card_list.append(href)
+                except:
+                    log("data-count error. Likely extraneous card. Skipping...")
+                    continue
                 card_list.append(href)
-                count = int(link['data-count'])
-                if count == 2:
-                    card_list.append(href)
+                #log(href)
     else:
         log("error: top_general_decks simple_get returned None")
     log("Found {0} cards in deck.".format(len(card_list)))
     return card_list
 
-def main():
-    #deck_list = top_user_decks(2)
-    #deck_list.extend(top_general_decks())
-    main_url = "https://www.hearthpwn.com"
-    search_url = "/decks/1140105-up-mill-warlock-top-100-by-illness"
 
+def test_full_card_list():
+    deck_list = top_user_decks(2)
+    deck_list.extend(top_general_decks())
+    full_card_list = []
+    for url in deck_list:
+        #log(url)
+        full_card_list.extend(card_list(url))
+    #log(full_card_list)
 
-
-card_list("/decks/1140105-up-mill-warlock-top-100-by-illness")      
-#main()
+#card_list("/decks/1140105-up-mill-warlock-top-100-by-illness")
+#card_list("/decks/1142643-the-light-wills-it")
+test_full_card_list()
