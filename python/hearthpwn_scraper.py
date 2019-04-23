@@ -61,7 +61,7 @@ def top_user_decks(pages):
     log("Found {0} user decks over {1} pages".format(len(top_decks), pages))
     return top_decks
 
-def top_general_decks():
+def top_general_decks(pages):
     """
     Gets the hearthpwn.com urls for pages worth of top-rated generalized meta decks
     Returns a list of urls
@@ -71,24 +71,36 @@ def top_general_decks():
     page_1_url = "top-decks?page=1&sort=-rating"
     page_2_url = "top-decks?page=2&sort=-rating"
     deck_link_re = re.compile('^\/top-decks\/[0-9].*')
-    
-    raw_html = simple_get(main_url+page_1_url)
-    if raw_html is not None:
-        html = BeautifulSoup(raw_html, 'html.parser')
-        top_decks = get_links(html, deck_link_re, top_decks)
-                
-        raw_html = simple_get(main_url+page_2_url)
+
+    for i in range (1, pages+1):
+        page_url = "top-decks?page={0}&sort=-rating".format(i)
+        raw_html = simple_get(main_url+page_url)
         if raw_html is not None:
             html = BeautifulSoup(raw_html, 'html.parser')
             top_decks = get_links(html, deck_link_re, top_decks)
-            log("Found {0} general decks over {1} pages".format(len(top_decks), 2))
         else:
-            log("error: top_general_decks simple_get returned None")
-    else:
-        log("error: top_general_decks simple_get returned None")
-    
-    
+            log("error: top_general_decks simple get returned None on page {0}.".format(i))
+    log("Found {0} general decks over {1} pages".format(len(top_decks), pages))
+
     return top_decks
+    
+    # raw_html = simple_get(main_url+page_1_url)
+    # if raw_html is not None:
+    #     html = BeautifulSoup(raw_html, 'html.parser')
+    #     top_decks = get_links(html, deck_link_re, top_decks)
+                
+    #     raw_html = simple_get(main_url+page_2_url)
+    #     if raw_html is not None:
+    #         html = BeautifulSoup(raw_html, 'html.parser')
+    #         top_decks = get_links(html, deck_link_re, top_decks)
+    #         log("Found {0} general decks over {1} pages".format(len(top_decks), 2))
+    #     else:
+    #         log("error: top_general_decks simple_get returned None")
+    # else:
+    #     log("error: top_general_decks simple_get returned None")
+    
+    
+    # return top_decks
 
 def get_links(html, regex, deck_list):
     """
@@ -136,7 +148,7 @@ def card_list(search_url):
 
 def test_full_card_list():
     deck_list = top_user_decks(2)
-    deck_list.extend(top_general_decks())
+    deck_list.extend(top_general_decks(2))
     full_card_list = []
     for url in deck_list:
         log(url)
