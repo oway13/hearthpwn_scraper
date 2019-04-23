@@ -3,6 +3,7 @@ from requests.exceptions import RequestException
 from contextlib import closing
 from bs4 import BeautifulSoup
 import re
+import json
 
 def simple_get(url):
     """
@@ -128,7 +129,7 @@ def card_list(search_url):
                 card_list.append(href)
                 #log(href)
     else:
-        log("error: top_general_decks simple_get returned None")
+        log("error: card_list simple_get returned None")
     log("Found {0} cards in deck.".format(len(card_list)))
     return card_list
 
@@ -138,9 +139,11 @@ def test_full_card_list():
     deck_list.extend(top_general_decks())
     full_card_list = []
     for url in deck_list:
-        #log(url)
+        log(url)
         full_card_list.extend(card_list(url))
     #log(full_card_list)
+    with open("cards.json", 'w') as cards:
+        json.dump(full_card_list, cards)
 
 #card_list("/decks/1140105-up-mill-warlock-top-100-by-illness")
 #card_list("/decks/1142643-the-light-wills-it")
