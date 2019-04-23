@@ -35,9 +35,7 @@ def is_good_response(resp):
 
 def log(e):
     """
-    It is always a good idea to log errors. 
-    This function just prints them, but you can
-    make it do anything.
+    Simple logging function. Currently Prints to Console.
     """
     print(e)
 
@@ -160,3 +158,5 @@ def test_full_card_list():
 #card_list("/decks/1140105-up-mill-warlock-top-100-by-illness")
 #card_list("/decks/1142643-the-light-wills-it")
 test_full_card_list()
+
+#log(str(card_list("/decks/1267668-tokens-will-get-shreked")))

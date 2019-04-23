@@ -103,4 +103,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 python/cards.json
+
+
+#maybe remove later?
 cards.json
